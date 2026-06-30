@@ -1,5 +1,5 @@
 <template>
-  <v-card class="photo-card" rounded="xl" elevation="8" @click="$emit('select')">
+  <v-card class="photo-card" rounded="xl" elevation="0" @click="$emit('select')">
     <div class="photo-card__preview">
       <span>{{ photo.filename }}</span>
     </div>
@@ -39,25 +39,29 @@ const formattedDate = computed(() => {
 <style scoped>
 .photo-card {
   overflow: hidden;
-  background: rgba(255, 250, 244, 0.88);
-  border: 1px solid rgba(183, 109, 97, 0.08);
+  background: rgba(255, 253, 248, 0.92);
+  border: 1px solid rgba(140, 90, 82, 0.08);
   cursor: pointer;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
 }
 
 .photo-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 18px 36px rgba(63, 39, 34, 0.18);
+  border-color: rgba(140, 90, 82, 0.16);
+  box-shadow: 0 16px 32px rgba(46, 38, 34, 0.08);
 }
 
 .photo-card__preview {
-  min-height: 220px;
+  min-height: 210px;
   display: grid;
   place-items: center;
   background:
-    linear-gradient(135deg, rgba(183, 109, 97, 0.1), rgba(47, 111, 109, 0.1)),
-    radial-gradient(circle at top, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.3));
-  color: #7b5a52;
+    linear-gradient(135deg, rgba(140, 90, 82, 0.08), rgba(49, 92, 96, 0.08)),
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.45));
+  color: #5f514c;
   font-weight: 700;
   padding: 1rem;
   text-align: center;
@@ -69,7 +73,7 @@ const formattedDate = computed(() => {
 }
 
 .photo-card__meta span {
-  color: rgba(48, 52, 56, 0.68);
+  color: rgba(48, 52, 56, 0.58);
   font-size: 0.92rem;
 }
 </style>

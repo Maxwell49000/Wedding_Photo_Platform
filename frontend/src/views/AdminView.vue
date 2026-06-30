@@ -2,24 +2,24 @@
   <div class="page">
     <AppHero
       eyebrow="Admin"
-      title="Pilotage admin des invités et des photos."
-      subtitle="Espace prévu pour la modération, les tags, les paramètres et les contrôles métier."
+      title="Pilotage des invités et des photos."
+      subtitle="Un espace sobre pour modérer, ajuster les métadonnées et garder la galerie sous contrôle."
     />
 
     <section class="admin-grid">
-      <v-card rounded="xl" elevation="4">
+      <v-card rounded="xl" class="metric-card" elevation="0">
         <v-card-title>Invités</v-card-title>
         <v-card-text>{{ guestStore.guests.length }} invités chargés</v-card-text>
       </v-card>
-      <v-card rounded="xl" elevation="4">
+      <v-card rounded="xl" class="metric-card" elevation="0">
         <v-card-title>Photos</v-card-title>
         <v-card-text>{{ photoStore.photos.length }} photos chargées</v-card-text>
       </v-card>
-      <v-card rounded="xl" elevation="4">
+      <v-card rounded="xl" class="metric-card" elevation="0">
         <v-card-title>Tags</v-card-title>
         <v-card-text>Gestion des personnes présentes et des associations photo</v-card-text>
       </v-card>
-      <v-card rounded="xl" elevation="4">
+      <v-card rounded="xl" class="metric-card" elevation="0">
         <v-card-title>Paramètres</v-card-title>
         <v-card-text>Code mariage, limites d’upload et préférences globales</v-card-text>
       </v-card>
@@ -31,7 +31,7 @@
         :key="photo.id"
         rounded="xl"
         class="photo-row"
-        elevation="4"
+        elevation="0"
       >
         <v-card-text class="photo-row__content">
           <div>
@@ -120,7 +120,7 @@ async function removeSelectedPhoto() {
 }
 
 .admin-grid {
-  width: min(100%, 980px);
+  width: min(100%, 1240px);
   margin: 0 auto;
   padding: 0 1.5rem 2rem;
   display: grid;
@@ -128,8 +128,15 @@ async function removeSelectedPhoto() {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
+.metric-card,
+.photo-row {
+  background: rgba(255, 253, 248, 0.92);
+  border: 1px solid rgba(140, 90, 82, 0.08);
+  box-shadow: 0 12px 28px rgba(46, 38, 34, 0.05);
+}
+
 .admin-list {
-  width: min(100%, 980px);
+  width: min(100%, 1240px);
   margin: 0 auto;
   padding: 0 1.5rem 2rem;
   display: grid;
@@ -151,5 +158,12 @@ async function removeSelectedPhoto() {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .photo-row__content {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
 </style>
