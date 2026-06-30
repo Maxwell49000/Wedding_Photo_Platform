@@ -7,19 +7,19 @@
           <span class="brand__text">Wedding Photos</span>
         </button>
 
-        <v-spacer />
-
-        <v-btn
-          v-for="item in navItems"
-          :key="item.to"
-          variant="text"
-          :prepend-icon="item.icon"
-          class="nav-link"
-          :class="{ 'nav-link--active': route.path === item.to }"
-          @click="goTo(item.to)"
-        >
-          {{ item.label }}
-        </v-btn>
+        <nav class="desktop-nav" aria-label="Navigation principale">
+          <v-btn
+            v-for="item in navItems"
+            :key="item.to"
+            variant="text"
+            :prepend-icon="item.icon"
+            class="nav-link"
+            :class="{ 'nav-link--active': route.path === item.to }"
+            @click="goTo(item.to)"
+          >
+            {{ item.label }}
+          </v-btn>
+        </nav>
       </div>
     </v-app-bar>
 
@@ -78,8 +78,10 @@ const goTo = (path) => {
   margin: 0 auto;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.75rem;
   padding: 0 20px;
+  min-width: 0;
 }
 
 .brand {
@@ -111,6 +113,13 @@ const goTo = (path) => {
   white-space: nowrap;
 }
 
+.desktop-nav {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  min-width: 0;
+}
+
 .nav-link {
   cursor: pointer;
   border-radius: 10px;
@@ -137,7 +146,7 @@ const goTo = (path) => {
     padding: 0 14px;
   }
 
-  .nav-link {
+  .desktop-nav {
     display: none;
   }
 

@@ -1,18 +1,18 @@
 <template>
-  <div class="page">
-    <AppHero
-      eyebrow="Upload"
-      title="Déposez, vérifiez, puis envoyez."
-      subtitle="Sélectionnez vos images, ajoutez un contexte et visualisez le rendu avant validation."
-    />
+  <div class="page-shell upload-page">
+    <section class="page-header">
+      <div>
+        <p class="eyebrow">Upload</p>
+        <h1 class="section-title">Ajouter des photos</h1>
+        <p class="section-copy">Sélectionnez vos images, renseignez le contexte, puis envoyez le tout en une seule fois.</p>
+      </div>
+    </section>
 
     <section class="upload-layout">
-      <v-card rounded="xl" class="panel panel--form" elevation="0">
+      <v-card class="panel panel--form" elevation="0">
         <v-card-title class="panel-title">
-          <div>
-            <span class="panel-kicker">Étape 1</span>
-            <h2>Métadonnées</h2>
-          </div>
+          <v-icon color="primary">mdi-form-select</v-icon>
+          Informations
         </v-card-title>
 
         <v-card-text class="form-grid">
@@ -70,12 +70,12 @@
               @change="handleFileChange"
             >
 
-            <v-icon size="44" color="primary" class="dropzone__icon">mdi-cloud-upload</v-icon>
+            <v-icon size="42" color="primary">mdi-cloud-upload-outline</v-icon>
             <div class="dropzone__copy">
-              <p class="dropzone__title">Glissez vos images ici</p>
-              <p class="dropzone__subtitle">ou cliquez pour ouvrir le sélecteur de fichiers</p>
+              <strong>Glissez vos images ici</strong>
+              <span>ou choisissez des fichiers depuis votre appareil</span>
             </div>
-            <v-btn variant="tonal" color="primary" class="dropzone__button" @click.stop="openFilePicker">
+            <v-btn variant="flat" color="primary" prepend-icon="mdi-folder-image" @click.stop="openFilePicker">
               Choisir des fichiers
             </v-btn>
           </div>
@@ -85,7 +85,7 @@
             type="info"
             variant="tonal"
             density="comfortable"
-            class="upload-summary"
+            class="status-alert"
           >
             {{ upload.files.length }} image(s) sélectionnée(s)
             <template #append>
@@ -147,6 +147,7 @@
           <v-btn
             color="primary"
             size="large"
+            prepend-icon="mdi-send"
             :loading="upload.submitting"
             :disabled="!canSubmit"
             @click="submitUpload"
@@ -156,15 +157,13 @@
         </v-card-actions>
       </v-card>
 
-      <v-card rounded="xl" class="panel panel--preview" elevation="0">
+      <v-card class="panel panel--preview" elevation="0">
         <v-card-title class="panel-title">
-          <div>
-            <span class="panel-kicker">Étape 2</span>
-            <h2>Aperçu</h2>
-          </div>
+          <v-icon color="primary">mdi-image-frame</v-icon>
+          Aperçu
         </v-card-title>
 
-        <v-card-text>
+        <v-card-text class="preview-content">
           <div v-if="coverPreview" class="preview-hero">
             <v-img
               :src="coverPreview.url"
@@ -173,16 +172,16 @@
               cover
             />
             <div class="preview-hero__overlay">
-              <p class="preview-hero__label">Aperçu principal</p>
-              <h3>{{ coverPreview.file.name }}</h3>
-              <p>{{ coverPreview.formattedSize }}</p>
+              <span>Aperçu principal</span>
+              <strong>{{ coverPreview.file.name }}</strong>
+              <small>{{ coverPreview.formattedSize }}</small>
             </div>
           </div>
 
           <div v-else class="preview-empty">
             <v-icon size="52" color="primary">mdi-image-outline</v-icon>
-            <h3>Aucun fichier sélectionné</h3>
-            <p>Ajoutez une ou plusieurs photos pour voir un aperçu avant validation.</p>
+            <strong>Aucun fichier sélectionné</strong>
+            <span>Ajoutez une ou plusieurs photos pour voir un aperçu avant validation.</span>
           </div>
 
           <div v-if="previewItems.length" class="thumbnail-strip">
@@ -210,7 +209,6 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import AppHero from '../components/AppHero.vue'
 import { useGuestStore } from '../stores/guestStore'
 import { useUploadStore } from '../stores/uploadStore'
 import { uploadPhotos } from '../services/uploadService'
@@ -392,41 +390,29 @@ async function submitUpload() {
 </script>
 
 <style scoped>
-.page {
-  width: min(100%, 1240px);
-  margin: 0 auto;
-  padding: 0 1.5rem 4rem;
+.page-header {
+  margin-bottom: 1.5rem;
 }
 
 .upload-layout {
   display: grid;
-  gap: 1.25rem;
-  grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
   align-items: start;
 }
 
 .panel {
-  background: rgba(255, 253, 248, 0.94);
-  border: 1px solid rgba(140, 90, 82, 0.08);
-  box-shadow: 0 16px 34px rgba(46, 38, 34, 0.06);
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  box-shadow: 0 12px 28px rgba(22, 33, 38, 0.06);
 }
 
 .panel-title {
-  padding: 1.25rem 1.25rem 0;
-}
-
-.panel-kicker {
-  display: block;
-  margin-bottom: 0.2rem;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: rgba(60, 47, 43, 0.58);
-}
-
-.panel-title h2 {
-  margin: 0;
-  font-size: 1.2rem;
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  padding: 1.15rem 1.15rem 0.4rem;
+  font-weight: 850;
 }
 
 .form-grid {
@@ -435,42 +421,36 @@ async function submitUpload() {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
-.dropzone-block {
+.dropzone-block,
+.upload-footer,
+.preview-content {
   display: grid;
   gap: 1rem;
 }
 
 .dropzone {
+  position: relative;
   display: grid;
   gap: 0.85rem;
   justify-items: center;
-  text-align: center;
-  border: 1.5px dashed rgba(140, 90, 82, 0.38);
-  border-radius: 24px;
-  background:
-    radial-gradient(circle at top, rgba(255, 255, 255, 0.9), transparent 48%),
-    rgba(140, 90, 82, 0.04);
+  min-height: 220px;
   padding: 1.4rem;
+  border: 2px dashed rgba(33, 90, 87, 0.32);
+  border-radius: 8px;
+  background: var(--app-surface-soft);
+  text-align: center;
   cursor: pointer;
   transition:
     border-color 0.18s ease,
     background-color 0.18s ease,
-    transform 0.18s ease,
     box-shadow 0.18s ease;
-  position: relative;
-  overflow: hidden;
 }
 
-.dropzone:hover {
-  border-color: rgba(140, 90, 82, 0.68);
-  background: rgba(140, 90, 82, 0.06);
-  transform: translateY(-1px);
-}
-
+.dropzone:hover,
 .dropzone--active {
-  border-color: #8c5a52;
-  background: rgba(140, 90, 82, 0.1);
-  box-shadow: 0 16px 34px rgba(140, 90, 82, 0.12);
+  border-color: var(--app-primary);
+  background: rgba(33, 90, 87, 0.1);
+  box-shadow: 0 16px 34px rgba(33, 90, 87, 0.12);
 }
 
 .dropzone__input {
@@ -480,42 +460,32 @@ async function submitUpload() {
   cursor: pointer;
 }
 
-.dropzone__icon,
-.dropzone__copy,
-.dropzone__button {
-  position: relative;
-  z-index: 1;
-}
-
 .dropzone__copy {
   display: grid;
   gap: 0.25rem;
 }
 
-.dropzone__title {
-  font-weight: 700;
-  font-size: 1.05rem;
-  margin: 0;
+.dropzone__copy span,
+.progress-line__header {
+  color: var(--app-muted);
 }
 
-.dropzone__subtitle {
-  margin: 0;
-  color: rgba(48, 52, 56, 0.7);
+.dropzone .v-icon,
+.dropzone__copy,
+.dropzone .v-btn {
+  position: relative;
+  z-index: 1;
 }
 
-.upload-summary {
-  border-radius: 18px;
+.status-alert {
+  border-radius: 8px;
 }
 
-.file-list {
+.file-list,
+.preview-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-}
-
-.upload-footer {
-  display: grid;
-  gap: 1rem;
 }
 
 .progress-line {
@@ -528,120 +498,97 @@ async function submitUpload() {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  color: rgba(48, 52, 56, 0.72);
-}
-
-.status-alert {
-  border-radius: 18px;
 }
 
 .actions {
   justify-content: end;
-  padding: 0 1.25rem 1.25rem;
+  padding: 0 1.15rem 1.15rem;
 }
 
 .panel--preview {
   position: sticky;
-  top: 1rem;
+  top: 84px;
+}
+
+.preview-hero,
+.preview-empty {
+  min-height: 390px;
+  overflow: hidden;
+  border-radius: 8px;
 }
 
 .preview-hero {
   position: relative;
-  min-height: 420px;
-  border-radius: 28px;
-  overflow: hidden;
-  background: linear-gradient(135deg, rgba(140, 90, 82, 0.06), rgba(49, 92, 96, 0.08));
+  background: var(--app-surface-soft);
 }
 
 .preview-hero__image {
-  height: 420px;
+  height: 390px;
 }
 
 .preview-hero__overlay {
   position: absolute;
   inset: auto 0 0 0;
-  padding: 1.2rem;
-  background: linear-gradient(180deg, transparent, rgba(34, 27, 24, 0.84));
+  display: grid;
+  gap: 0.15rem;
+  padding: 1rem;
+  background: linear-gradient(180deg, transparent, rgba(10, 18, 20, 0.86));
   color: #fff;
 }
 
-.preview-hero__label {
-  margin: 0 0 0.2rem;
+.preview-hero__overlay span {
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: 0.72rem;
-  opacity: 0.72;
 }
 
-.preview-hero__overlay h3 {
-  margin: 0 0 0.2rem;
-  font-size: 1rem;
-  word-break: break-word;
-}
-
-.preview-hero__overlay p {
-  margin: 0;
-  opacity: 0.85;
+.preview-hero__overlay strong {
+  overflow-wrap: anywhere;
 }
 
 .preview-empty {
-  min-height: 420px;
   display: grid;
+  gap: 0.5rem;
   place-items: center;
-  text-align: center;
+  align-content: center;
   padding: 2rem;
-  border: 1px dashed rgba(140, 90, 82, 0.16);
-  border-radius: 28px;
-  background: rgba(140, 90, 82, 0.03);
+  border: 1px dashed var(--app-border);
+  background: var(--app-surface-soft);
+  text-align: center;
 }
 
-.preview-empty h3 {
-  margin: 0.85rem 0 0.25rem;
-}
-
-.preview-empty p {
-  margin: 0;
-  max-width: 28ch;
-  color: rgba(48, 52, 56, 0.7);
+.preview-empty span {
+  max-width: 30ch;
+  color: var(--app-muted);
 }
 
 .thumbnail-strip {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(72px, 96px);
+  grid-auto-columns: 78px;
   gap: 0.65rem;
   overflow-x: auto;
   padding-bottom: 0.25rem;
 }
 
 .thumbnail {
-  border: 2px solid transparent;
-  border-radius: 18px;
+  overflow: hidden;
   padding: 0;
+  border: 2px solid transparent;
+  border-radius: 8px;
   background: transparent;
   cursor: pointer;
-  overflow: hidden;
-  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
-}
-
-.thumbnail:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(63, 39, 34, 0.12);
 }
 
 .thumbnail--active {
-  border-color: #8c5a52;
+  border-color: var(--app-primary);
 }
 
 .thumbnail__image {
   width: 100%;
   aspect-ratio: 1 / 1;
-}
-
-.preview-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
 }
 
 @media (max-width: 960px) {
@@ -655,29 +602,18 @@ async function submitUpload() {
 }
 
 @media (max-width: 600px) {
-  .page {
-    padding-inline: 1rem;
-  }
-
-  .panel-title {
-    padding-inline: 1rem;
-  }
-
   .actions {
-    justify-content: stretch;
-  }
-
-  .actions .v-btn {
-    width: 100%;
+    display: grid;
+    padding-inline: 1rem;
   }
 
   .preview-hero,
   .preview-empty {
-    min-height: 300px;
+    min-height: 290px;
   }
 
   .preview-hero__image {
-    height: 300px;
+    height: 290px;
   }
 }
 </style>
