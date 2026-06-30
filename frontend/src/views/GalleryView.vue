@@ -21,36 +21,48 @@
         v-for="photo in filteredPhotos"
         :key="photo.id"
         :photo="photo"
+        @select="openViewer(photo)"
       />
     </section>
+
+    <PhotoViewerDialog
+      :open="viewerOpen"
+      :photo="selectedPhoto"
+      @close="closeViewer"
+    />
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useGalleryStore } from '../stores/galleryStore'
 import { usePhotoStore } from '../stores/photoStore'
 import PhotoCard from '../components/PhotoCard.vue'
+import PhotoViewerDialog from '../components/PhotoViewerDialog.vue'
+import { filterPhotos } from '../utils/photoHelpers'
 
 const gallery = useGalleryStore()
 const photoStore = usePhotoStore()
+
+const viewerOpen = ref(false)
+const selectedPhoto = ref(null)
 
 onMounted(() => {
   photoStore.loadPhotos()
 })
 
 const filteredPhotos = computed(() => {
-  const search = gallery.search.trim().toLowerCase()
-  if (!search) {
-    return photoStore.photos
-  }
-
-  return photoStore.photos.filter((photo) => {
-    return [photo.filename, photo.description]
-      .filter(Boolean)
-      .some((value) => value.toLowerCase().includes(search))
-  })
+  return filterPhotos(photoStore.photos, gallery.search)
 })
+
+function openViewer(photo) {
+  selectedPhoto.value = photo
+  viewerOpen.value = true
+}
+
+function closeViewer() {
+  viewerOpen.value = false
+}
 </script>
 
 <style scoped>

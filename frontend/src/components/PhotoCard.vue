@@ -1,5 +1,5 @@
 <template>
-  <v-card class="photo-card" rounded="xl" elevation="8">
+  <v-card class="photo-card" rounded="xl" elevation="8" @click="$emit('select')">
     <div class="photo-card__preview">
       <span>{{ photo.filename }}</span>
     </div>
@@ -14,6 +14,8 @@
 
 <script setup>
 import { computed } from 'vue'
+
+defineEmits(['select'])
 
 const props = defineProps({
   photo: {
@@ -39,6 +41,13 @@ const formattedDate = computed(() => {
   overflow: hidden;
   background: rgba(255, 250, 244, 0.88);
   border: 1px solid rgba(183, 109, 97, 0.08);
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.photo-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 36px rgba(63, 39, 34, 0.18);
 }
 
 .photo-card__preview {

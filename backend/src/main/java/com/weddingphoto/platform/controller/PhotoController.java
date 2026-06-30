@@ -1,12 +1,18 @@
 package com.weddingphoto.platform.controller;
 
 import com.weddingphoto.platform.dto.PhotoResponse;
+import com.weddingphoto.platform.dto.PhotoUpdateRequest;
 import com.weddingphoto.platform.service.PhotoService;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaTypeFactory;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,8 +21,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/photos")
@@ -38,6 +46,25 @@ public class PhotoController {
     return photoService.getPhoto(id);
   }
 
+  @GetMapping("/{id}/view")
+  public ResponseEntity<Resource> viewPhoto(@PathVariable UUID id) {
+    Resource resource = photoService.viewPhoto(id);
+    return ResponseEntity.ok()
+        .contentType(MediaTypeFactory.getMediaType(resource).orElse(MediaType.APPLICATION_OCTET_STREAM))
+        .body(resource);
+  }
+
+  @GetMapping("/{id}/download")
+  public ResponseEntity<Resource> downloadPhoto(@PathVariable UUID id) {
+    Resource resource = photoService.downloadPhoto(id);
+    String filename = photoService.getPhoto(id).filename();
+    return ResponseEntity.ok()
+        .header(HttpHeaders.CONTENT_DISPOSITION,
+            ContentDisposition.attachment().filename(filename).build().toString())
+        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+        .body(resource);
+  }
+
   @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @ResponseStatus(HttpStatus.CREATED)
   public List<PhotoResponse> uploadPhoto(
@@ -53,8 +80,8 @@ public class PhotoController {
   }
 
   @PutMapping("/{id}")
-  public PhotoResponse updatePhoto(@PathVariable UUID id) {
-    return photoService.markPhotoUpdated(id);
+  public PhotoResponse updatePhoto(@PathVariable UUID id, @Valid @RequestBody PhotoUpdateRequest request) {
+    return photoService.updatePhoto(id, request);
   }
 
   @DeleteMapping("/{id}")

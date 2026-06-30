@@ -1,4 +1,5 @@
 import { http } from './http'
+import { createUploadFormData } from '../utils/uploadHelpers'
 
 export async function uploadPhotos({
   files,
@@ -7,23 +8,12 @@ export async function uploadPhotos({
   photographerGuestId,
   onProgress,
 }) {
-  const formData = new FormData()
-
-  for (const file of files) {
-    formData.append('files', file)
-  }
-
-  if (description) {
-    formData.append('description', description)
-  }
-
-  if (uploaderGuestId) {
-    formData.append('uploaderGuestId', uploaderGuestId)
-  }
-
-  if (photographerGuestId) {
-    formData.append('photographerGuestId', photographerGuestId)
-  }
+  const formData = createUploadFormData({
+    files,
+    description,
+    uploaderGuestId,
+    photographerGuestId,
+  })
 
   const { data } = await http.post('/photos/upload', formData, {
     headers: {

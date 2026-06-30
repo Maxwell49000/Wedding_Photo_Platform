@@ -17,6 +17,8 @@ public final class PhotoMapper {
         photo.getUploadDate(),
         photo.getUploader() == null ? null : photo.getUploader().getId(),
         photo.getPhotographer() == null ? null : photo.getPhotographer().getId(),
-        photo.isVisible());
+        photo.isVisible(),
+        "/api/photos/" + photo.getId() + "/view",
+        "/api/photos/" + photo.getId() + "/download");
   }
 }

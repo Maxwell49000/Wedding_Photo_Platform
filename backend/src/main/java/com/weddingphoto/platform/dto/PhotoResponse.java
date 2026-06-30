@@ -11,5 +11,7 @@ public record PhotoResponse(
     OffsetDateTime uploadDate,
     UUID uploaderGuestId,
     UUID photographerGuestId,
-    boolean visible) {
+    boolean visible,
+    String viewUrl,
+    String downloadUrl) {
 }

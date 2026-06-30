@@ -1,6 +1,7 @@
 package com.weddingphoto.platform.service.impl;
 
 import com.weddingphoto.platform.dto.PhotoResponse;
+import com.weddingphoto.platform.dto.PhotoUpdateRequest;
 import com.weddingphoto.platform.entity.Guest;
 import com.weddingphoto.platform.entity.Photo;
 import com.weddingphoto.platform.exception.NotFoundException;
@@ -9,6 +10,7 @@ import com.weddingphoto.platform.repository.GuestRepository;
 import com.weddingphoto.platform.repository.PhotoRepository;
 import com.weddingphoto.platform.service.PhotoService;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.time.OffsetDateTime;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,8 +18,11 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -42,11 +47,13 @@ public class PhotoServiceImpl implements PhotoService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<PhotoResponse> listPhotos() {
     return photoRepository.findAll().stream().map(PhotoMapper::toResponse).toList();
   }
 
   @Override
+  @Transactional(readOnly = true)
   public PhotoResponse getPhoto(UUID id) {
     return photoRepository.findById(id)
         .map(PhotoMapper::toResponse)
@@ -54,14 +61,19 @@ public class PhotoServiceImpl implements PhotoService {
   }
 
   @Override
-  public PhotoResponse markPhotoUpdated(UUID id) {
+  @Transactional
+  public PhotoResponse updatePhoto(UUID id, PhotoUpdateRequest request) {
     Photo photo = photoRepository.findById(id)
         .orElseThrow(() -> new NotFoundException("Photo not found"));
-    photo.setDescription((photo.getDescription() == null ? "" : photo.getDescription()) + " (updated)");
+    photo.setDescription(request.description());
+    photo.setVisible(request.visible() == null || request.visible());
+    photo.setUploader(resolveGuest(request.uploaderGuestId()));
+    photo.setPhotographer(resolveGuest(request.photographerGuestId()));
     return PhotoMapper.toResponse(photoRepository.save(photo));
   }
 
   @Override
+  @Transactional
   public void deletePhoto(UUID id) {
     Photo photo = photoRepository.findById(id)
         .orElseThrow(() -> new NotFoundException("Photo not found"));
@@ -70,6 +82,19 @@ public class PhotoServiceImpl implements PhotoService {
   }
 
   @Override
+  @Transactional(readOnly = true)
+  public Resource viewPhoto(UUID id) {
+    return toResource(id);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Resource downloadPhoto(UUID id) {
+    return toResource(id);
+  }
+
+  @Override
+  @Transactional
   public List<PhotoResponse> uploadPhotos(
       List<MultipartFile> files,
       String description,
@@ -162,6 +187,21 @@ public class PhotoServiceImpl implements PhotoService {
       Files.deleteIfExists(Path.of(filePath));
     } catch (IOException exception) {
       throw new IllegalStateException("Unable to delete stored file", exception);
+    }
+  }
+
+  private Resource toResource(UUID id) {
+    Photo photo = photoRepository.findById(id)
+        .orElseThrow(() -> new NotFoundException("Photo not found"));
+
+    try {
+      Resource resource = new UrlResource(Path.of(photo.getFilepath()).toUri());
+      if (!resource.exists() || !resource.isReadable()) {
+        throw new NotFoundException("Photo file not found");
+      }
+      return resource;
+    } catch (MalformedURLException exception) {
+      throw new IllegalStateException("Unable to open photo file", exception);
     }
   }
 }
