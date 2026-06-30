@@ -1,0 +1,15 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+    command: npm run dev -- --host 0.0.0.0
+
+  backend:
+    build:
+      context: ./backend
+
+  postgres:
+    image: postgres:16-alpine
+
+  nginx:
+    image: nginx:1.27-alpine
