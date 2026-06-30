@@ -8,11 +8,11 @@ export const usePhotoStore = defineStore('photoStore', {
     error: null,
   }),
   actions: {
-    async loadPhotos() {
+    async loadPhotos(options = {}) {
       this.loading = true
       this.error = null
       try {
-        this.photos = await fetchPhotos()
+        this.photos = await fetchPhotos(options)
       } catch (error) {
         this.error = error
       } finally {

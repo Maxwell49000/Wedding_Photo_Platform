@@ -1,8 +1,10 @@
 import { http } from './http'
 import { buildPhotoDownloadUrl, buildPhotoViewUrl } from '../utils/photoHelpers'
 
-export async function fetchPhotos() {
-  const { data } = await http.get('/photos')
+export async function fetchPhotos({ includeHidden = false } = {}) {
+  const { data } = await http.get('/photos', {
+    params: { includeHidden },
+  })
   return data
 }
 

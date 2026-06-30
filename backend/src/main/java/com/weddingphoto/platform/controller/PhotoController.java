@@ -2,6 +2,7 @@ package com.weddingphoto.platform.controller;
 
 import com.weddingphoto.platform.dto.PhotoResponse;
 import com.weddingphoto.platform.dto.PhotoUpdateRequest;
+import com.weddingphoto.platform.service.AdminAccessService;
 import com.weddingphoto.platform.service.PhotoService;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.Valid;
@@ -31,14 +33,21 @@ import jakarta.validation.Valid;
 public class PhotoController {
 
   private final PhotoService photoService;
+  private final AdminAccessService adminAccessService;
 
-  public PhotoController(PhotoService photoService) {
+  public PhotoController(PhotoService photoService, AdminAccessService adminAccessService) {
     this.photoService = photoService;
+    this.adminAccessService = adminAccessService;
   }
 
   @GetMapping
-  public List<PhotoResponse> listPhotos() {
-    return photoService.listPhotos();
+  public List<PhotoResponse> listPhotos(
+      @RequestParam(value = "includeHidden", defaultValue = "false") boolean includeHidden,
+      @RequestHeader(value = "X-Admin-Code", required = false) String adminCode) {
+    if (includeHidden) {
+      adminAccessService.requireAdminCode(adminCode);
+    }
+    return photoService.listPhotos(includeHidden);
   }
 
   @GetMapping("/{id}")
@@ -80,13 +89,20 @@ public class PhotoController {
   }
 
   @PutMapping("/{id}")
-  public PhotoResponse updatePhoto(@PathVariable UUID id, @Valid @RequestBody PhotoUpdateRequest request) {
+  public PhotoResponse updatePhoto(
+      @PathVariable UUID id,
+      @Valid @RequestBody PhotoUpdateRequest request,
+      @RequestHeader(value = "X-Admin-Code", required = false) String adminCode) {
+    adminAccessService.requireAdminCode(adminCode);
     return photoService.updatePhoto(id, request);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deletePhoto(@PathVariable UUID id) {
+  public void deletePhoto(
+      @PathVariable UUID id,
+      @RequestHeader(value = "X-Admin-Code", required = false) String adminCode) {
+    adminAccessService.requireAdminCode(adminCode);
     photoService.deletePhoto(id);
   }
 }

@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface PhotoService {
 
-  List<PhotoResponse> listPhotos();
+  List<PhotoResponse> listPhotos(boolean includeHidden);
 
   PhotoResponse getPhoto(UUID id);
 

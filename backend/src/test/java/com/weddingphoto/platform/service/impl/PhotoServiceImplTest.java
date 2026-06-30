@@ -48,6 +48,43 @@ class PhotoServiceImplTest {
   }
 
   @Test
+  void listPhotosOnlyReturnsVisiblePhotosByDefault() {
+    Photo visiblePhoto = Photo.builder()
+        .id(UUID.randomUUID())
+        .filename("photo.jpg")
+        .filepath(tempDir.resolve("photo.jpg").toString())
+        .uploadDate(OffsetDateTime.now())
+        .visible(true)
+        .build();
+
+    when(photoRepository.findByVisibleTrue()).thenReturn(List.of(visiblePhoto));
+
+    var responses = service.listPhotos(false);
+
+    assertThat(responses).hasSize(1);
+    verify(photoRepository).findByVisibleTrue();
+  }
+
+  @Test
+  void listPhotosCanIncludeHiddenPhotosForAdmin() {
+    Photo hiddenPhoto = Photo.builder()
+        .id(UUID.randomUUID())
+        .filename("hidden.jpg")
+        .filepath(tempDir.resolve("hidden.jpg").toString())
+        .uploadDate(OffsetDateTime.now())
+        .visible(false)
+        .build();
+
+    when(photoRepository.findAll()).thenReturn(List.of(hiddenPhoto));
+
+    var responses = service.listPhotos(true);
+
+    assertThat(responses).hasSize(1);
+    assertThat(responses.get(0).visible()).isFalse();
+    verify(photoRepository).findAll();
+  }
+
+  @Test
   void uploadPhotosStoresFileAndReturnsResponse() throws Exception {
     Guest uploader = Guest.builder().id(UUID.randomUUID()).displayName("Alice").build();
     Guest photographer = Guest.builder().id(UUID.randomUUID()).displayName("Luc").build();

@@ -5,6 +5,7 @@ services:
     environment:
       VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/api}
       VITE_API_PROXY_TARGET: ${VITE_API_PROXY_TARGET:-http://backend:8080}
+      VITE_ADMIN_ACCESS_CODE: ${VITE_ADMIN_ACCESS_CODE:-admin-demo}
     ports:
       - "5173:5173"
     command: npm run dev -- --host 0.0.0.0
@@ -21,6 +22,7 @@ services:
       APP_UPLOAD_MAX_FILE_SIZE: ${APP_UPLOAD_MAX_FILE_SIZE:-20MB}
       APP_UPLOAD_MAX_REQUEST_SIZE: ${APP_UPLOAD_MAX_REQUEST_SIZE:-50MB}
       APP_PHOTOS_DIR: ${APP_PHOTOS_DIR:-/data/photos}
+      APP_ADMIN_ACCESS_CODE: ${APP_ADMIN_ACCESS_CODE:-admin-demo}
     ports:
       - "8080:8080"
     volumes:

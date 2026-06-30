@@ -48,8 +48,11 @@ public class PhotoServiceImpl implements PhotoService {
 
   @Override
   @Transactional(readOnly = true)
-  public List<PhotoResponse> listPhotos() {
-    return photoRepository.findAll().stream().map(PhotoMapper::toResponse).toList();
+  public List<PhotoResponse> listPhotos(boolean includeHidden) {
+    return (includeHidden ? photoRepository.findAll() : photoRepository.findByVisibleTrue())
+        .stream()
+        .map(PhotoMapper::toResponse)
+        .toList();
   }
 
   @Override

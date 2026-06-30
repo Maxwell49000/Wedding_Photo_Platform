@@ -226,10 +226,12 @@ onMounted(async () => {
 })
 
 const guestItems = computed(() => {
-  return guestStore.guests.map((guest) => ({
-    title: guest.displayName,
-    value: guest.id,
-  }))
+  return guestStore.guests
+    .filter((guest) => guest.active)
+    .map((guest) => ({
+      title: guest.displayName,
+      value: guest.id,
+    }))
 })
 
 const canSubmit = computed(() => upload.files.length > 0 && !upload.submitting)

@@ -27,5 +27,7 @@ management:
         include: health,info
 
 app:
+  admin:
+    code: ${APP_ADMIN_ACCESS_CODE:admin-demo}
   storage:
     photos-dir: ${APP_PHOTOS_DIR:/data/photos}

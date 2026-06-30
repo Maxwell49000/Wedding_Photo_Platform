@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { fetchGuests } from '../services/guestService'
+import { createGuest, deleteGuest, fetchGuests, updateGuest } from '../services/guestService'
 
 export const useGuestStore = defineStore('guestStore', {
   state: () => ({
@@ -18,6 +18,20 @@ export const useGuestStore = defineStore('guestStore', {
       } finally {
         this.loading = false
       }
+    },
+    async createGuest(payload) {
+      const guest = await createGuest(payload)
+      this.guests = [...this.guests, guest]
+      return guest
+    },
+    async updateGuest(id, payload) {
+      const guest = await updateGuest(id, payload)
+      this.guests = this.guests.map((item) => (item.id === id ? guest : item))
+      return guest
+    },
+    async deleteGuest(id) {
+      await deleteGuest(id)
+      this.guests = this.guests.filter((guest) => guest.id !== id)
     },
   },
 })
