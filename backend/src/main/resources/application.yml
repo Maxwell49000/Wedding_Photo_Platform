@@ -1,3 +1,31 @@
 spring:
   application:
     name: wedding-photo-platform
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/wedding_photo_platform}
+    username: ${SPRING_DATASOURCE_USERNAME:wedding}
+    password: ${SPRING_DATASOURCE_PASSWORD:wedding}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  servlet:
+    multipart:
+      max-file-size: ${APP_UPLOAD_MAX_FILE_SIZE:20MB}
+      max-request-size: ${APP_UPLOAD_MAX_REQUEST_SIZE:50MB}
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+app:
+  storage:
+    photos-dir: ${APP_PHOTOS_DIR:/data/photos}

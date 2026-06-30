@@ -17,3 +17,8 @@ This repository is being scaffolded from the project specification in
 Initial repository structure is being prepared. The next steps are to
 add the frontend and backend application skeletons, then wire them into
 Docker.
+
+## Environment
+
+Copy `.env.example` to `.env` if you want to override the defaults used
+by `docker-compose.yml`.
